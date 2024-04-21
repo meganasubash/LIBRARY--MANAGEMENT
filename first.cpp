@@ -110,3 +110,178 @@ void Lib::booklist(int i)
     else
         librarian();
 }
+void Lib::issue()
+{
+    char st[50], st1[20]; // student name and student id
+    int b, i, j, d, m, y, dd, mm, yy, cont = 0;
+    system("cls");
+    cout << "\n\t\t->Please Choose one option :-\n";
+    cout << "\n\t\t1.Issue Book\n\n\t\t2.View Issued Book\n\n\t\t3.Search student who isuued books\n\n\t\t4.Reissue Book\n\n\t\t5.Return Book\n\n\t\t6.Go back to menu\n\n\t\tEnter Your Choice : ";
+    cin >> i;
+    fflush(stdin);
+    if (i == 1) // to issue a book
+    {
+        system("cls");
+        b = branch(2);
+        system("cls");
+        fflush(stdin);
+        cout << "\n\t\t->Please Enter Details :-\n";
+        cout << "\n\t\tEnter Book Name : ";
+        cin.getline(bookname, 100);
+        cout << "\n\t\tEnter Book's ID : ";
+        cin.getline(id, 20);
+        // strcpy(st,sc);
+        der(id, b, 1);
+        cout << "\n\t\tEnter Student Name : ";
+        cin.getline(auname, 100);
+        cout << "\n\t\tEnter Student's ID : ";
+        cin.getline(pub, 20);
+        cout << "\n\t\tEnter date : ";
+        cin >> q >> B >> p; // date is stored in this variables in this context
+        ofstream outf("student.txt", ios::binary | ios::app);
+        outf.write((char *)this, sizeof(*this));
+        outf.close();
+        cout << "\n\n\t\tIssue Successfully.\n";
+    }
+    else if (i == 2) // to view issued books
+    {
+        ifstream intf("student.txt", ios::binary);
+        system("cls");
+        cout << "\n\t\t->The Details are :-\n";
+        intf.read((char *)this, sizeof(*this));
+        i = 0;
+        while (!intf.eof())
+        {
+            i++;
+            cout << "\n\t\t********** " << i << ". ********** \n";
+            cout << "\n\t\tStudent Name : " << auname << "\n\t\t" << "Student's ID : " << pub << "\n\t\t" << "Book Name : " << bookname << "\n\t\t" << "Book's ID : " << id << "\n\t\t" << "Date : " << q << "/" << B << "/" << p << "\n";
+            intf.read((char *)this, sizeof(*this));
+        }
+        intf.close(); // close file
+    }
+    else if (i == 3)
+    {
+        system("cls");
+        fflush(stdin);
+        cout << "\n\t\t->Please Enter Details :-\n";
+        cout << "\n\n\t\tEnter Student Name : ";
+        cin.getline(st, 50);
+        cout << "\n\n\t\tEnter Student's ID : ";
+        cin.getline(st1, 20);
+        system("cls");
+        ifstream intf("student.txt", ios::binary);
+        intf.read((char *)this, sizeof(*this));
+        cont = 0;
+        while (!intf.eof())
+        {
+            for (i = 0; pub[i] != '\0' && st1[i] != '\0' && st1[i] == pub[i]; i++)
+                ;
+            if (pub[i] == '\0' && st1[i] == '\0')
+            {
+                cont++;
+                if (cont == 1)
+                {
+                    cout << "\n\t\t->The Details are :-\n";
+                    cout << "\n\t\tStudent Name : " << auname;
+                    cout << "\n\t\tStudent's ID : " << pub;
+                }
+                cout << "\n\n\t\t******* " << cont << ". Book details *******\n";
+                cout << "\n\t\tBook Name : " << bookname;
+                cout << "\n\t\tBook's ID : " << id;
+                cout << "\n\t\tDate : " << q << "/" << B << "/" << p << "\n";
+            }
+            intf.read((char *)this, sizeof(*this));
+        }
+        intf.close();
+        if (cont == 0)
+            cout << "\n\t\tNo record found.";
+    }
+    else if (i == 4)
+    {
+        system("cls");
+        fflush(stdin);
+        cout << "\n\t\t->Please Enter Details :-\n";
+        cout << "\n\n\t\tEnter Student's ID : ";
+        cin.getline(st, 50);
+        cout << "\n\t\tEnter Book's ID : ";
+        cin.getline(st1, 20);
+        fstream intf("student.txt", ios::in | ios::out | ios::ate | ios::binary);
+        intf.seekg(0);
+        intf.read((char *)this, sizeof(*this));
+        while (!intf.eof())
+        {
+            for (i = 0; id[i] != '\0' && st1[i] != '\0' && st1[i] == id[i]; i++)
+                ;
+            for (j = 0; pub[j] != '\0' && st[j] != '\0' && st[j] == pub[j]; j++)
+                ;
+            if (id[i] == '\0' && pub[j] == '\0' && st[j] == '\0' && st1[i] == '\0')
+            {
+                d = q;
+                m = B;
+                y = p;
+                cout << "\n\t\tEnter New Date : ";
+                cin >> q >> B >> p;
+                fine(d, m, y, q, B, p);                   // fn1
+                intf.seekp(intf.tellp() - sizeof(*this)); // fn3
+                intf.write((char *)this, sizeof(*this));  // fn5
+                cout << "\n\n\t\tReissue successfully.";  // fn3
+                break;
+            }
+            intf.read((char *)this, sizeof(*this));
+        }
+        intf.close();
+    }
+    else if (i == 5)
+    {
+        system("cls");
+        b = branch(2);
+        system("cls");
+        fflush(stdin);
+        cout << "\n\t\t->Please Enter Details :-\n";
+        cout << "\n\t\tEnter Book's ID : ";
+        cin.getline(st1, 20);
+        der(st1, b, 2);
+        cout << "\n\n\t\tEnter Student's ID : ";
+        cin.getline(st, 20);
+        cout << "\n\t\tEnter Present date : ";
+        cin >> d >> m >> y;
+        ofstream outf("temp.txt", ios::app | ios::binary);
+        ifstream intf("student.txt", ios::binary);
+        intf.read((char *)this, sizeof(*this));
+        while (!intf.eof())
+        {
+            for (i = 0; id[i] != '\0' && st1[i] != '\0' && st1[i] == id[i]; i++)
+                ;
+            for (j = 0; pub[j] != '\0' && st[j] != '\0' && st[j] == pub[j]; j++)
+                ;
+            if (id[i] == '\0' && pub[j] == '\0' && st[j] == '\0' && st1[i] == '\0' && cont == 0)
+            {
+                cont++;
+                intf.read((char *)this, sizeof(*this));
+                fine(q, B, p, d, m, y);
+                cout << "\n\t\tReturned successfully.";
+            }
+            else
+            {
+                outf.write((char *)this, sizeof(*this));
+                intf.read((char *)this, sizeof(*this));
+            }
+        }
+        intf.close();
+        outf.close();
+        getch();
+        remove("student.txt");
+        rename("temp.txt", "student.txt");
+    }
+    else if (i == 6)
+    {
+        system("cls");
+        librarian(); // goes back to menue
+    }
+    else
+        cout << "\n\t\tWrong Input.\n";
+    cout << "\n\n\t\tPress any key to continue.....";
+    getch();
+    system("cls");
+    librarian();
+}
