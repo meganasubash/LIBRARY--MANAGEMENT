@@ -285,3 +285,29 @@ void Lib::issue()
     system("cls");
     librarian();
 }
+void Lib::fine(int d, int m, int y, int dd, int mm, int yy)
+{
+    long int n1, n2; // Declare variables to store the number of days
+    int years, l, i;
+    const int monthDays[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; // Array representing the number of days in each month
+    n1 = y * 365 + d;                                                           // Calculate the total number of days for the first date (d, m, y)
+    for (i = 0; i < m - 1; i++)
+        n1 += monthDays[i]; // Add days for each month prior to the given month
+    years = y;
+    if (m <= 2)
+        years--;                               // Adjust years for leap year calculation if the given month is January or February
+    l = years / 4 - years / 100 + years / 400; // Calculate leap years
+    n1 += l;
+    n2 = yy * 365 + dd; // Calculate the total number of days for the second date (dd, mm, yy)
+    for (i = 0; i < mm - 1; i++)
+        n2 += monthDays[i]; // Add days for each month prior to the given month
+    years = yy;
+    if (m <= 2)
+        years--;                               // Adjust years for leap year calculation if the given month is January or February
+    l = years / 4 - years / 100 + years / 400; // Calculate leap years
+    n2 += l;
+    n1 = n2 - n1;
+    n2 = n1 - 15; // Subtract 15 from the calculated difference to calculate the fine
+    if (n2 > 0)
+        cout << "\n\t\tThe Total Fine is : " << n2;
+}
